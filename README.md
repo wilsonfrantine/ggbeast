@@ -8,13 +8,13 @@ A set of functions to plot BEAST outputs
 remotes::install_github("wilsonfrantine/ggbeast")
 ```
 
-## to use it you need
+## To use it you just need
 
 ```{r}
 library("ggbeast")
 
-plot1 <- ggebsp("path_to_your_EBSP_run_log_file")
+p1 <- ggebsp("path_to_your_EBSP_run_log_file")
 
-plot1
+p1
 
 ```
