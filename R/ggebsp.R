@@ -7,9 +7,9 @@
 #'@export
 #'@import ggplot2
 
-ggebsp <- function(file= NULL, burnin=0.1){
+ggebsp <- function(file = NULL, burnin=0.1){
 
-  df <- removeBurnin(read.table(EBSPfile, header=T, sep='\t', as.is=T), burnin)
+  df <- removeBurnin(read.table(file, header=T, sep='\t', as.is=T), burnin)
   res <- processEBSPdata(df, isLinear=T)
 
   keep <- c("allTimes", "Nmedian", "NlowerHPD", "NupperHPD", "NlowerCPD", "NupperCPD")
