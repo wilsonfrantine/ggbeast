@@ -24,7 +24,7 @@ p1
 ## Customizing it
 
 As any other ggplot2 object, you can customize it wherever you want.
-To see how to change specificities as time scales, Ne scales and how to plot many ebsp runs, please take a look on [this vignette](vignette/using_ggbeast.html)
+To see how to change specificities as colors, time scales, Ne scales and how to plot many ebsp runs, please take a look on [this vignette](vignette/using_ggbeast.html)
 
 or open from your R.
 
