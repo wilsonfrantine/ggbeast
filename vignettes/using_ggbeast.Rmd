@@ -1,0 +1,131 @@
+---
+title: "using_ggbeast"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{using_ggbeast}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  fig.width = 6, fig.height = 4
+)
+```
+
+## Installing the package
+
+You can install the package from github running this line bellow.
+
+```{r eval=FALSE}
+remotes::install_github("wilsonfrantine/ggbeast")
+```
+
+## Loading the package
+
+After installing, you must load it.
+
+```{r}
+library("ggbeast")
+```
+
+## Using ggbeast
+
+First, you must load some data providing the path to your "EBSP.log" file.
+
+Herein we'll load it from the example file in the package.
+
+```{r}
+file_path <- system.file("extdata/ebsp.log", package="ggbeast")
+file_path
+```
+
+
+Now we must take all the relevant data with `harvest_ebsp()`
+```{r}
+ebsp <- harvest_ebsp(path=file_path)
+head(ebsp)
+```
+
+Now, it is simple like this
+
+```{r}
+p1 <- ggebsp(ebsp)
+p1
+```
+
+
+### Customizing your plot
+The coolest thing about ggplot framework is the possibility to change almost anything. You can linearize axis, change colors, change formats and so on...
+
+Down bellow, you will find some simple examples.
+
+#### Changing the Time scales
+
+You can change time scales with simple commands:
+
+```{r}
+p1+scale_time_Ka()
+```
+
+#### Changing Ne scale
+
+The default of the `ggebsp` is to output the Ne in log scale (as above), but you can linearize that by:
+
+```{r}
+p1 + scale_Ne_linear()
+```
+
+#### Changing colors
+
+```{r}
+p1+scale_time_Ka()+
+  ggplot2::scale_color_manual(values="blue")+
+  ggplot2::scale_fill_manual(values="blue")
+```
+
+
+### Creating compositions
+
+Usually we have more than one plot to show. The ggbeast has a function `ggwrap`, which prepare the data for a `facet_wrap` from ggplot2. 
+
+See the example bellow. As we don't have two plots, I'll send the p1 twice.
+
+
+```{r}
+ggwrap(p1, p1) |>
+    ggebsp() + facet_wrap(~Run)
+```
+
+We can make it better by changing colors, time scale and removing the frame arround the facets names (1 and 2).
+
+```{r}
+myplots <- ggwrap(p1, p1) |>
+    ggebsp() + facet_wrap(~Run)
+    
+myplots <- myplots +
+  aes(fill=Run, colour = Run)+
+  scale_time_Ka()+
+  scale_fill_manual(values=c("black", "grey"))+
+  scale_color_manual(values=c("black", "grey"))+
+  theme(strip.background = element_blank())
+
+myplots
+```
+
+You may wanna change the plots names for those meaningfull to you. That is easy with ggplot2. 
+
+We create a labeller for the variable `Run`, which is the one who identify the plots. Then, we say that 1 = pop1, and so on for as many plots we have.
+
+```{r}
+
+labels <- labeller( Run = c("1"="Pop1", "2"="Pop2") )
+
+myplots + 
+  facet_wrap(~Run, labeller = labels)+
+  scale_Ne_log()
+
+```
+

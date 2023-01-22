@@ -1,32 +1,34 @@
 #'@name ggebsp
 #'@title Plot EBSP with ggplot2
 #'@author Wilson Frantine-Silva
-#'@param file the path to EBSP.log run file
-#'@param burnin the burnin quantity parameter. By defaut it is 0.1 (10%), but users may adjust as tracer output
-#'@description this function outputs an ggplot2 object for a Extended Bayesian Skyline plot output as described in details in the EBSP BEAST2 tutorial by Joseph Helled
+#'@param x the output from hasvest_ebsp fuction or a path to EBSP.log run file
+#'@description This function outputs an ggplot2 object for a Extended Bayesian Skyline Plot output as described in the EBSP BEAST2 tutorial by Joseph Helled
+#'
+#'@details this function expects a processed data.frame, but if the user provides a path, it will run the `harvest_ebsp` function
+#'
+#'You can change the time scales with the functions `scale_time_raw`, `scale_time_years`, `scale_time_ka`. Each one of these scales convert to raw scale, years, or thousand of years from an assumed million of years scale. You can also customize it with `scale_x_continuous(suffix, scale)`. See ggplot2 documentation
+#'
+#'@seealso [harvest_ebsp()], [scale_time()], [scale_Ne()], [ggplot2::scale_x_continuous()]
 #'@export
 #'@import ggplot2
 
-ggebsp <- function(file = NULL, burnin=0.1){
+ggebsp <- function(x = NULL){
 
-  df <- removeBurnin(read.table(file, header=T, sep='\t', as.is=T), burnin)
-  res <- processEBSPdata(df, isLinear=T)
+  if(!is.data.frame(x)){
+    x <- harvest_ebsp(x)
+    warning("You provided a file path, so we run harvest_ebsp() by default. Run this function first to control the burnin.")
+  }
 
-  keep <- c("allTimes", "Nmedian", "NlowerHPD", "NupperHPD", "NlowerCPD", "NupperCPD")
-
-  ggdata <- res[keep] |>  Reduce(f=cbind) |> as.data.frame()
-
-  colnames(ggdata) <- keep
-
-  out <- ggdata |>
-    ggplot2::ggplot(aes(x = allTimes, y=Nmedian))+
+  out <- x |>
+    ggplot2::ggplot(ggplot2::aes_string(x = "allTimes", y= "Nmedian", color="ID", fill="ID"))+
     ggplot2::geom_line(group=1)+
-    ggplot2::geom_ribbon(aes(ymin=NlowerHPD, ymax=NupperHPD), alpha=0.1 )+
+    ggplot2::geom_ribbon(ggplot2::aes_string(ymin="NlowerHPD", ymax="NupperHPD"), alpha=0.1 )+
 
     ggplot2::theme_classic()+
+    ggplot2::theme(legend.position = "none")+
 
     ggplot2::scale_y_log10()+
-    ggplot2::scale_x_continuous(labels = scales::label_number(suffix=" Ka", scale = 1e3))+
 
-    ggplot2::labs(y="Effective Population Size", x = "Time (Ka)")
+    ggplot2::labs(y="Effective Population Size", x = "Time")
+  return(out)
 }
