@@ -1,6 +1,7 @@
 # ggbeast
-A set of functions to plot BEAST outputs
+*Plotting Beast2 outputs with ggplot2*
 
+<img src="https://github.com/wilsonfrantine/ggbeast/blob/ghpg/img/ggebsp.png">
 
 ## to install the package use:
 
