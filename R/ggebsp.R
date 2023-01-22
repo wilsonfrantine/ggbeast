@@ -16,7 +16,7 @@ ggebsp <- function(x = NULL){
 
   if(!is.data.frame(x)){
     x <- harvest_ebsp(x)
-    warning("You provided a file path, so we run harvest_ebsp() by default. Run this function first to control the burnin.")
+    warning("You provided a file path, so harvest_ebsp() was executed with 10% of burnin. Run harvest_ebsp() first to control the burnin.")
   }
 
   out <- x |>
